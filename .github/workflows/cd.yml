@@ -1,0 +1,131 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  release:
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main'
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout (workflow_run)
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Checkout (manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare release metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          tag="v${version}"
+          archive="file-automation-ui-${version}.zip"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "archive=${archive}" >> "$GITHUB_OUTPUT"
+
+      - name: Report release target
+        shell: bash
+        run: |
+          echo "CD mode: publish"
+          echo "Tag target: ${{ steps.metadata.outputs.tag }}"
+          echo "Archive: ${{ steps.metadata.outputs.archive }}"
+
+      - name: Create runtime archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.metadata.outputs.version }}"
+          archive="${{ steps.metadata.outputs.archive }}"
+          staging_root="release-package"
+          app_root="${staging_root}/file-automation-ui-${version}"
+
+          rm -rf "$staging_root" "$archive"
+          mkdir -p "$app_root"
+
+          cp -R .next "$app_root/.next"
+          cp -R public "$app_root/public"
+          cp package.json "$app_root/package.json"
+          cp package-lock.json "$app_root/package-lock.json"
+          cp next.config.ts "$app_root/next.config.ts"
+          cp README.md "$app_root/README.md"
+
+          if [[ -f .env.example ]]; then
+            cp .env.example "$app_root/.env.example"
+          fi
+
+          (
+            cd "$staging_root"
+            zip -r "../$archive" "file-automation-ui-${version}"
+          )
+
+      - name: Create and push tag if missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ steps.metadata.outputs.tag }}"
+
+          if git ls-remote --tags origin "$tag" | grep -q "$tag"; then
+            echo "Tag $tag already exists on origin."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "$tag"
+          git push origin "$tag"
+
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${{ steps.metadata.outputs.tag }}"
+          archive="${{ steps.metadata.outputs.archive }}"
+
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$archive" --clobber
+          else
+            gh release create "$tag" "$archive" \
+              --title "$tag" \
+              --notes "Release artifact for ${tag}."
+          fi

@@ -1,7 +1,20 @@
-export default function Home() {
+import { AppShell } from "@/components/layout/app-shell";
+import { PageShell } from "@/components/patterns/page-shell";
+import { ConnectionWorkspace } from "@/features/connection/ui/connection-workspace";
+
+import { getConnectionSessionSnapshot } from "@/features/connection/session/connection-session";
+
+export default async function Home() {
+  const initialSessionSnapshot = await getConnectionSessionSnapshot();
+
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-4xl font-semibold tracking-tight">File Automation Configurations</h1>
-    </main>
+    <AppShell>
+      <PageShell>
+        <ConnectionWorkspace
+          initialConnectionString={initialSessionSnapshot.activeConnectionString}
+          initialRecentConnectionStrings={initialSessionSnapshot.recentConnectionStrings}
+        />
+      </PageShell>
+    </AppShell>
   );
 }
