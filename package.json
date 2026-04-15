@@ -1,6 +1,6 @@
 {
-  "name": "wireframe-faconfig-temp",
-  "version": "0.1.0",
+  "name": "file-automation-ui",
+  "version": "v20260414 (HEL-71)",
   "private": true,
   "scripts": {
     "dev": "next dev",
