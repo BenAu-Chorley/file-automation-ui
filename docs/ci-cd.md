@@ -59,7 +59,7 @@ CI **does not**:
 ## CD (Continuous Delivery)
 
 ### Trigger
-- CI completion on `main` via `workflow_run` (CD runs after CI completes successfully)
+- CI completion on `master` via `workflow_run` (CD runs after CI completes successfully)
 - Manual trigger (`workflow_dispatch`) for controlled verification
 
 ### Runner
@@ -67,7 +67,7 @@ CI **does not**:
 
 ### Versioning and tagging strategy
 - Application version is defined in `package.json` with format `yyyyMMdd.PR-number.serial_within_a_day`.
-- On each `main` merge, CD reads `package.json` version and tags the commit as `v{version}`.
+- On each `master` merge, CD reads `package.json` version and tags the commit as `v{version}`.
 
 The tagged commit represents the official released version.
 

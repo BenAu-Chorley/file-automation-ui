@@ -50,11 +50,6 @@
 - At the start of each newly approved milestone, increment the version in both `package.json` and `package-lock.json` before implementing changes for that milestone.
 - Daily serial must reset to `01` for the first change started on a new day (for example, `20260417.HEL-72.01`).
 
-### Milestone 2 kickoff carryover UX decisions
-- Keep connection test-result confirmation at the top of the Session connection section.
-- Use a compact icon-style control for Active connection detail expand/collapse to reduce visual weight.
-- Preserve Session connection panel open state after clicking Use this connection to avoid abrupt collapse.
-
 ## 2026-04-20
 
 ### Milestone 2 review follow-up decisions
@@ -78,6 +73,7 @@
 	3. Proceed with implementation only after memory reflects current docs/context state.
 
 ### Context note relevance rule
+- Organize `/context/` as one folder per active or archived PR/workstream so PR-specific operational notes stay grouped with their own `current-state.md` and `next-tasks.md` files.
 - Keep `context/{current PR}/current-state.md` and `context/{current PR}/next-tasks.md` focused on currently relevant status and actionable next work.
 - Remove or collapse superseded historical details once they are no longer needed for day-to-day execution.
 - Preserve milestone approval gates and active pending items so these files remain operational checklists, not long-form history logs.
@@ -91,17 +87,6 @@
 - Treat `LocalFileCopy` as a normal executor class in the same generalized executor save/update path used by other executor classes.
 - Do not maintain parallel special-case upsert stacks (`upsertLocalFileCopyExecutor` vs `upsertExecutorConfig`) across actions, controllers, services, repositories, or UI editors.
 - Keep executor validation/schema metadata centralized so required/optional fields, type normalization, and constraints apply consistently across all non-`NoOp` executor classes.
-
-### Milestone 3 batch 2 save semantics
-- Executor selection changes are staged in UI per role and are not persisted until explicit user confirmation on `Save`.
-- Role-level `Cancel` discards staged role changes only after explicit user confirmation.
-- Persisting a role executor is a single transactional operation that must include both:
-	- updating executor class choice on `fa.t_runner_task` for the role column, and
-	- executor-row mutation according to transition semantics:
-		- same class: update/upsert existing row
-		- class switch between non-`NoOp` executors: delete old row then add new row
-		- switch from `NoOp`: add new row only
-		- switch to `NoOp`: delete old row only
 
 ### Milestone 3 task metadata editing rule
 - Task-level fields `name` and `descp` on `fa.t_runner_task` are editable independently from executor edits.

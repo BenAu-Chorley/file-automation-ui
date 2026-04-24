@@ -25,7 +25,7 @@
 
 ## Environments
 - PR deployments -> UAT (URL prefix per PR)
-- main -> internal production
+- master -> internal production
 
 ## Project Evolution
 - AI-augmented development as much as possible
