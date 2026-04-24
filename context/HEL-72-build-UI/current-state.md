@@ -14,7 +14,7 @@ Last updated: 2026-04-24
 
 - Milestone 6 completed summary:
   - CI validation workflow remains in place with 7-day retention for `coverage-report` artifacts
-  - CD workflow at `.github/workflows/cd.yml` is wired to run after CI completion on `main` via `workflow_run`, with `workflow_dispatch` available for manual runs
+  - CD workflow at `.github/workflows/cd.yml` is wired to run after CI completion on `master` via `workflow_run`, with `workflow_dispatch` available for manual runs
   - CD packages the runtime archive, manages version tag handling, and creates/updates GitHub Releases
   - obsolete CD `dry_run` mode has been removed per user direction
   - workflow action versions were aligned to current supported majors (`actions/checkout@v6`, `actions/upload-artifact@v7`)

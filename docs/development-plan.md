@@ -13,7 +13,7 @@ Scope alignment:
 ## Delivery Strategy
 - Deliver in small, verifiable slices.
 - At the end of each milestone, complete a checkpoint before moving forward.
-- Keep pull requests focused and squash before merge to keep `main` history clean.
+- Keep pull requests focused and squash before merge to keep `master` history clean.
 
 ## Milestone 0: Foundations and Guardrails
 
@@ -155,15 +155,15 @@ Exit criteria:
 Implement delivery pipeline for pull-based distribution via GitHub Releases.
 
 ### Work slices
-1. Implement CI workflow for PR/non-main validation.
-2. Implement CD workflow for merge-to-main release packaging, gated by required CI success before merge.
+1. Implement CI workflow for PR/non-master validation.
+2. Implement CD workflow for merge-to-master release packaging, gated by required CI success before merge.
 3. Tag releases using format `v{yyyyMMdd}.{PR-number}.{serial_within_a_day}` (for example: `v20260406.HEL-72.02`) as defined in CI/CD strategy.
 4. Package runtime archive with required files (`.next`, `public`, runtime manifests/docs).
 5. Publish GitHub Release assets.
 
 ### Checkpoint M6
 - CI runs lint, tests, build on PR updates.
-- CD creates version tag and release asset on `main` merge only after CI-required checks have passed for merge.
+- CD creates version tag and release asset on `master` merge only after CI-required checks have passed for merge.
 - Archive contents match runtime requirements and can be executed manually.
 
 Exit criteria:
