@@ -1,6 +1,6 @@
 # Database Model Overview
 
-As this is just a wireframe, the project does not need to connect to db
+As a internal web UI to manage file automation db records, the project would connect to FileAutomation db to be specified by the user during runtime
 
 ## Schema
 - Single schema: [fa]
@@ -140,3 +140,63 @@ For execution tracking details, it's important for the UI to show them and allow
 - [end_time] [datetime] NULL,
 - [status] [varchar](30) NOT NULL,
 - [remarks] [varchar](500) NULL,
+
+### Task table
+[fa].[t_runner_task]
+- [id] [int] IDENTITY(1,1) NOT NULL,
+- [name] [varchar](50) NOT NULL,
+- [descp] [varchar](200) NOT NULL,
+- [extractor_class] [varchar](100) NOT NULL,
+- [transformer_class] [varchar](100) NOT NULL,
+- [loader_class] [varchar](100) NOT NULL,
+
+
+### Allowed enum values for selected executor fields
+
+[fa].[t_executor_LocalFile2Sftp]
+- [sftp_credential_type]
+    - "PrivateKeyAuthentication"
+    - "PasswordAuthentication"
+
+[fa].[t_executor_LocalFolder2Sftp]
+- [sftp_credential_type]
+    - "PrivateKeyAuthentication"
+    - "PasswordAuthentication"
+- [tree_traversal_strategy]
+    - "DFS_PreOrder" (default)
+- [transactional_strategy]
+    - "NonTxn" (default)
+- [continuation_strategy]
+    - "FailSafe" (default)
+- [root_folder_inclusion_strategy]
+    - "IncludeRoot"
+    - "ExcludeRoot"
+- [file_upload_strategy]
+    - "Overwrite" (default)
+- [folder_upload_strategy]
+    - "Merge"
+    - "Skip"
+
+[fa].[t_executor_SftpFile2Local]
+- [sftp_credential_type]
+    - "PrivateKeyAuthentication"
+    - "PasswordAuthentication"
+
+[fa].[t_executor_SftpFolder2Local]
+- [sftp_credential_type]
+    - "PrivateKeyAuthentication"
+    - "PasswordAuthentication"
+- [tree_traversal_strategy]
+    - "DFS_PreOrder" (default)
+- [transactional_strategy]
+    - "NonTxn" (default)
+- [continuation_strategy]
+    - "FailSafe" (default)
+- [root_folder_inclusion_strategy]
+    - "IncludeRoot"
+    - "ExcludeRoot"
+- [file_download_strategy]
+    - "Overwrite" (default)
+- [folder_download_strategy]
+    - "Merge"
+    - "Skip"

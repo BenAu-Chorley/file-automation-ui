@@ -1,26 +1,167 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: hsl(220 23% 97%);
+  --foreground: hsl(222 47% 11%);
+  --card: hsl(0 0% 100%);
+  --card-foreground: hsl(222 47% 11%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(222 47% 11%);
+  --primary: hsl(239 84% 67%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(220 16% 94%);
+  --secondary-foreground: hsl(222 47% 16%);
+  --muted: hsl(220 16% 92%);
+  --muted-foreground: hsl(215 16% 35%);
+  --accent: hsl(237 73% 94%);
+  --accent-foreground: hsl(237 55% 35%);
+  --destructive: hsl(0 72% 51%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(220 14% 88%);
+  --input: hsl(220 14% 88%);
+  --ring: hsl(239 84% 67%);
+  --teams-brand: hsl(239 84% 67%);
+  --teams-brand-alt: hsl(248 86% 73%);
+  --teams-surface: hsl(0 0% 100%);
+  --teams-surface-alt: hsl(220 22% 95%);
+  --radius: 0.6rem;
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-teams-brand: var(--teams-brand);
+  --color-teams-brand-alt: var(--teams-brand-alt);
+  --color-teams-surface: var(--teams-surface);
+  --color-teams-surface-alt: var(--teams-surface-alt);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+.dark {
+  color-scheme: dark;
+  --background: hsl(224 32% 10%);
+  --foreground: hsl(220 20% 95%);
+  --card: hsl(223 27% 13%);
+  --card-foreground: hsl(220 20% 95%);
+  --popover: hsl(223 27% 13%);
+  --popover-foreground: hsl(220 20% 95%);
+  --primary: hsl(239 84% 70%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(223 20% 18%);
+  --secondary-foreground: hsl(220 20% 95%);
+  --muted: hsl(223 17% 20%);
+  --muted-foreground: hsl(220 13% 70%);
+  --accent: hsl(238 34% 22%);
+  --accent-foreground: hsl(239 84% 78%);
+  --destructive: hsl(0 63% 43%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(222 18% 27%);
+  --input: hsl(222 18% 27%);
+  --ring: hsl(239 84% 70%);
+  --teams-brand: hsl(239 84% 70%);
+  --teams-brand-alt: hsl(248 86% 76%);
+  --teams-surface: hsl(223 27% 13%);
+  --teams-surface-alt: hsl(223 20% 18%);
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    color-scheme: dark;
+    --background: hsl(224 32% 10%);
+    --foreground: hsl(220 20% 95%);
+    --card: hsl(223 27% 13%);
+    --card-foreground: hsl(220 20% 95%);
+    --popover: hsl(223 27% 13%);
+    --popover-foreground: hsl(220 20% 95%);
+    --primary: hsl(239 84% 70%);
+    --primary-foreground: hsl(0 0% 100%);
+    --secondary: hsl(223 20% 18%);
+    --secondary-foreground: hsl(220 20% 95%);
+    --muted: hsl(223 17% 20%);
+    --muted-foreground: hsl(220 13% 70%);
+    --accent: hsl(238 34% 22%);
+    --accent-foreground: hsl(239 84% 78%);
+    --destructive: hsl(0 63% 43%);
+    --destructive-foreground: hsl(0 0% 100%);
+    --border: hsl(222 18% 27%);
+    --input: hsl(222 18% 27%);
+    --ring: hsl(239 84% 70%);
+    --teams-brand: hsl(239 84% 70%);
+    --teams-brand-alt: hsl(248 86% 76%);
+    --teams-surface: hsl(223 27% 13%);
+    --teams-surface-alt: hsl(223 20% 18%);
   }
+}
+
+* {
+  border-color: var(--border);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  background-color: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body::selection {
+  background: color-mix(in oklch, var(--primary) 22%, white);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@layer base {
+  body {
+    @apply min-h-screen bg-background text-foreground;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    @apply focus-visible:outline-none;
+  }
 }
