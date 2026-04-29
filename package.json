@@ -1,6 +1,6 @@
 {
   "name": "file-automation-ui",
-  "version": "20260424.HEL-62.01",
+  "version": "20260429.HEL-78.01",
   "private": true,
   "scripts": {
     "dev": "next dev",
