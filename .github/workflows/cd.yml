@@ -14,12 +14,9 @@ env:
 jobs:
   release:
     if: |
-      github.event_name == 'workflow_dispatch' ||
-      (
-        github.event_name == 'workflow_run' &&
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.head_branch == 'master'
-      )
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -129,3 +126,90 @@ jobs:
               --title "$tag" \
               --notes "Release artifact for ${tag}."
           fi
+
+  preview-package:
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.ref_type == 'branch' &&
+      github.ref_name != 'master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout (workflow_run)
+        if: github.event_name == 'workflow_run'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Checkout (manual)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare release metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          tag="v${version}"
+          archive="file-automation-ui-${version}.zip"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "archive=${archive}" >> "$GITHUB_OUTPUT"
+
+      - name: Report release target
+        shell: bash
+        run: |
+          echo "CD mode: preview"
+          echo "Tag target: ${{ steps.metadata.outputs.tag }}"
+          echo "Archive: ${{ steps.metadata.outputs.archive }}"
+
+      - name: Create runtime archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.metadata.outputs.version }}"
+          archive="${{ steps.metadata.outputs.archive }}"
+          staging_root="release-package"
+          app_root="${staging_root}/file-automation-ui-${version}"
+
+          rm -rf "$staging_root" "$archive"
+          mkdir -p "$app_root"
+
+          cp -R .next "$app_root/.next"
+          cp -R public "$app_root/public"
+          cp package.json "$app_root/package.json"
+          cp package-lock.json "$app_root/package-lock.json"
+          cp next.config.ts "$app_root/next.config.ts"
+          cp README.md "$app_root/README.md"
+
+          if [[ -f .env.example ]]; then
+            cp .env.example "$app_root/.env.example"
+          fi
+
+          (
+            cd "$staging_root"
+            zip -r "../$archive" "file-automation-ui-${version}"
+          )
+
+      - name: Upload preview package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.metadata.outputs.archive }}
+          path: ${{ steps.metadata.outputs.archive }}
+          if-no-files-found: error
